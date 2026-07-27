@@ -1,8 +1,9 @@
-# Proof Audit Pipeline
+# Danus-Based Proof Audit
 
-Proof Audit Pipeline is a local, sequential review workflow for mathematical
-proofs. It is intended for fast, structured checking when a Lean formalization
-is unavailable or disproportionate.
+Danus-Based Proof Audit is a local, sequential review workflow for mathematical
+proofs, distilled from the multi-worker audit process developed in Danus. It is
+intended for fast, structured checking when a Lean formalization is unavailable
+or disproportionate.
 
 It does not turn an AI verdict into a formal proof certificate. Its purpose is
 to make informal review more disciplined, reproducible, and easy to inspect.
@@ -173,4 +174,3 @@ proofaudit run examples/minimal --until-blocked
 ```
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for contribution guidance.
-

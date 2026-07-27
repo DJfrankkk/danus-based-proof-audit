@@ -112,7 +112,7 @@ def serve(project: str | Path, host: str = "127.0.0.1", port: int = 8765) -> Non
     config = load_config(project)
     load_state(config.root)
     server = ThreadingHTTPServer((host, port), make_handler(config.root))
-    print(f"Proof Audit dashboard: http://{host}:{port}/")
+    print(f"Danus Proof Audit dashboard: http://{host}:{port}/")
     try:
         server.serve_forever()
     except KeyboardInterrupt:

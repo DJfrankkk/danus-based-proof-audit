@@ -3,13 +3,13 @@ requires = ["setuptools>=68"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "proof-audit-pipeline"
+name = "danus-based-proof-audit"
 version = "0.1.0"
 description = "Configurable, evidence-preserving AI review for mathematical proofs"
 readme = "README.md"
 requires-python = ">=3.11"
 license = { text = "Apache-2.0" }
-authors = [{ name = "Proof Audit Pipeline contributors" }]
+authors = [{ name = "Danus-Based Proof Audit contributors" }]
 keywords = ["mathematics", "proof-review", "audit", "llm", "research"]
 classifiers = [
   "Development Status :: 3 - Alpha",
@@ -38,4 +38,3 @@ proofaudit = ["assets/*.html", "assets/*.json"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-

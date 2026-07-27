@@ -56,7 +56,7 @@ def load_document(path: Path, kind: str | None = None) -> SourceDocument:
         except ImportError as exc:
             raise ConfigError(
                 "PDF input requires pypdf; install with "
-                "'pip install proof-audit-pipeline[pdf]'"
+                "'pip install danus-based-proof-audit[pdf]'"
             ) from exc
         reader = PdfReader(str(path))
         pages = [((page.extract_text() or "").translate(_LIGATURES)) for page in reader.pages]
@@ -161,4 +161,3 @@ def suggest_items(document: SourceDocument) -> tuple[ItemSpec, ...]:
         )
         for index, (start, title) in enumerate(anchors)
     )
-
