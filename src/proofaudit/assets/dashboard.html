@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Proof Audit</title>
+<style>
+:root {
+  color-scheme: light;
+  --ink:#1f282f; --muted:#65717a; --line:#d8dde1; --wash:#f4f6f7; --paper:#fff;
+  --green:#147a4e; --green-bg:#e9f6ef; --amber:#8a6000; --amber-bg:#fff6d8;
+  --red:#b42318; --red-bg:#fdeceb; --blue:#235eab; --blue-bg:#eaf2fc;
+}
+* { box-sizing:border-box; }
+body { margin:0; color:var(--ink); background:var(--paper); font:14px/1.45 system-ui,-apple-system,"Segoe UI",sans-serif; letter-spacing:0; }
+button { font:inherit; }
+.topbar { min-height:64px; border-bottom:1px solid var(--line); display:flex; align-items:center; justify-content:space-between; padding:0 max(20px,calc((100vw - 1320px)/2)); }
+.brand { display:flex; align-items:baseline; gap:12px; min-width:0; }
+.brand h1 { font-size:20px; margin:0; white-space:nowrap; }
+.brand span { color:var(--muted); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.icon-button { width:36px; height:36px; border:1px solid var(--line); border-radius:6px; background:var(--paper); cursor:pointer; font-size:19px; }
+.icon-button:hover { background:var(--wash); }
+main { max-width:1320px; margin:0 auto; padding:22px 20px 36px; }
+.summary { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); border:1px solid var(--line); border-radius:6px; overflow:hidden; }
+.metric { padding:14px 16px; border-right:1px solid var(--line); min-height:74px; }
+.metric:last-child { border-right:0; }
+.metric .label { color:var(--muted); font-size:12px; text-transform:uppercase; }
+.metric .value { font-weight:750; font-size:22px; margin-top:4px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.progress-track { height:5px; background:#e7eaed; margin-top:10px; }
+.progress-fill { height:100%; background:var(--green); width:0; transition:width .2s ease; }
+.current { margin:18px 0; padding:14px 16px; border-left:4px solid var(--blue); background:var(--blue-bg); display:flex; justify-content:space-between; gap:18px; }
+.current strong { display:block; margin-bottom:3px; }
+.current .hash { color:var(--muted); font-family:ui-monospace,monospace; font-size:12px; overflow-wrap:anywhere; text-align:right; }
+.table-shell { border:1px solid var(--line); border-radius:6px; overflow:auto; }
+table { width:100%; border-collapse:collapse; white-space:nowrap; }
+th,td { height:44px; padding:8px 11px; border-bottom:1px solid var(--line); text-align:left; }
+th { position:sticky; top:0; z-index:1; background:var(--wash); color:#4e5961; text-transform:uppercase; font-size:11px; }
+tbody tr:last-child td { border-bottom:0; }
+tbody tr.active { background:#f7fbff; }
+.item-title { white-space:normal; min-width:250px; max-width:440px; }
+.badge { display:inline-flex; align-items:center; min-height:24px; padding:2px 7px; border-radius:5px; font-size:12px; font-weight:700; }
+.closed,.pass { color:var(--green); background:var(--green-bg); }
+.in_progress { color:var(--blue); background:var(--blue-bg); }
+.needs_repair,.fail { color:var(--red); background:var(--red-bg); }
+.skipped,.uncertain { color:var(--amber); background:var(--amber-bg); }
+.pending { color:var(--muted); background:var(--wash); }
+.review-button { border:0; background:transparent; padding:0; cursor:pointer; }
+.review-button:hover .badge { outline:1px solid currentColor; }
+.footer { color:var(--muted); font-size:12px; margin-top:14px; display:flex; justify-content:space-between; gap:16px; }
+dialog { width:min(760px,calc(100vw - 30px)); max-height:82vh; border:1px solid var(--line); border-radius:6px; padding:0; color:var(--ink); }
+dialog::backdrop { background:rgba(20,28,34,.34); }
+.dialog-head { display:flex; align-items:center; justify-content:space-between; padding:14px 17px; border-bottom:1px solid var(--line); }
+.dialog-head h2 { font-size:17px; margin:0; }
+.dialog-body { padding:16px 17px; overflow:auto; max-height:calc(82vh - 60px); }
+.finding { padding:10px 0; border-top:1px solid var(--line); }
+.finding:first-child { border-top:0; }
+.finding code { font-size:12px; }
+@media (max-width:760px) {
+  .summary { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .metric:nth-child(2) { border-right:0; }
+  .metric:nth-child(-n+2) { border-bottom:1px solid var(--line); }
+  .current { flex-direction:column; }
+  .current .hash { text-align:left; }
+  .brand span { display:none; }
+}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="brand"><h1>Proof Audit</h1><span id="projectName">Loading</span></div>
+  <button class="icon-button" id="refreshButton" title="Refresh" aria-label="Refresh">↻</button>
+</header>
+<main>
+  <section class="summary">
+    <div class="metric"><div class="label">Progress</div><div class="value" id="progressValue">0%</div><div class="progress-track"><div class="progress-fill" id="progressFill"></div></div></div>
+    <div class="metric"><div class="label">Closed</div><div class="value" id="closedValue">0</div></div>
+    <div class="metric"><div class="label">Reviewers</div><div class="value" id="reviewerValue">0</div></div>
+    <div class="metric"><div class="label">Generation</div><div class="value" id="generationValue">0</div></div>
+  </section>
+  <section class="current">
+    <div><strong id="currentTitle">No active item</strong><span id="currentLocation"></span></div>
+    <div class="hash" id="sourceHash"></div>
+  </section>
+  <div class="table-shell"><table>
+    <thead><tr id="tableHead"></tr></thead>
+    <tbody id="tableBody"></tbody>
+  </table></div>
+  <div class="footer"><span id="evidenceNotice"></span><span id="updatedAt"></span></div>
+</main>
+<dialog id="reportDialog">
+  <div class="dialog-head"><h2 id="dialogTitle">Review</h2><button class="icon-button" id="closeDialog" title="Close" aria-label="Close">×</button></div>
+  <div class="dialog-body" id="dialogBody"></div>
+</dialog>
+<script>
+const esc = value => String(value ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]));
+const badge = value => `<span class="badge ${esc(value)}">${esc(value || "pending")}</span>`;
+let snapshot = null;
+
+async function openReport(item, reviewer) {
+  const response = await fetch(`/api/report?item=${encodeURIComponent(item)}&reviewer=${encodeURIComponent(reviewer)}`, {cache:"no-store"});
+  if (!response.ok) return;
+  const report = await response.json();
+  document.getElementById("dialogTitle").textContent = `${report.item_id} · ${report.reviewer_name}`;
+  const findings = report.findings.map(f => `<div class="finding"><code>${esc(f.severity)}</code> <strong>${esc(f.location)}</strong><p>${esc(f.issue)}</p>${f.suggested_fix ? `<p><em>${esc(f.suggested_fix)}</em></p>` : ""}</div>`).join("");
+  document.getElementById("dialogBody").innerHTML = `<p>${badge(report.mathematical_verdict)}</p><p>${esc(report.summary)}</p>${findings || "<p>No critical or gap findings.</p>"}${report.editorial_repair ? `<h3>Editorial repair</h3><p>${esc(report.repair_notes)}</p>` : ""}<p class="hash">${esc(report.report_sha256)}</p>`;
+  document.getElementById("reportDialog").showModal();
+}
+
+function render(data) {
+  snapshot = data;
+  document.getElementById("projectName").textContent = data.project_name;
+  document.getElementById("progressValue").textContent = `${data.progress.percent}%`;
+  document.getElementById("progressFill").style.width = `${data.progress.percent}%`;
+  document.getElementById("closedValue").textContent = `${data.progress.closed} / ${data.progress.total}`;
+  document.getElementById("reviewerValue").textContent = data.reviewers.length;
+  document.getElementById("generationValue").textContent = data.source.generation;
+  document.getElementById("sourceHash").textContent = `SHA-256 ${data.source.sha256}`;
+  document.getElementById("evidenceNotice").textContent = data.evidence_notice;
+  document.getElementById("updatedAt").textContent = `Updated ${new Date(data.updated_at).toLocaleString()}`;
+
+  const current = data.items.find(item => item.id === data.current_item_id);
+  document.getElementById("currentTitle").textContent = current ? `${current.id} · ${current.title}` : "Audit complete";
+  document.getElementById("currentLocation").textContent = current ? `${current.unit} ${current.start}-${current.end}` : "";
+
+  document.getElementById("tableHead").innerHTML = `<th>Seq.</th><th>Item</th><th>Location</th><th>Status</th>${data.reviewers.map(r => `<th title="${esc(r.lens)}">${esc(r.id)}</th>`).join("")}`;
+  document.getElementById("tableBody").innerHTML = data.items.map((item, index) => {
+    const reviews = data.reviewers.map(reviewer => {
+      const review = item.reviews[reviewer.id];
+      return review ? `<td><button class="review-button" data-item="${esc(item.id)}" data-reviewer="${esc(reviewer.id)}">${badge(review.mathematical_verdict)}</button></td>` : `<td>${badge("pending")}</td>`;
+    }).join("");
+    return `<tr class="${item.id === data.current_item_id ? "active" : ""}"><td>${String(index + 1).padStart(3,"0")}</td><td class="item-title"><strong>${esc(item.title)}</strong></td><td>${esc(item.unit)} ${item.start}-${item.end}</td><td>${badge(item.status)}</td>${reviews}</tr>`;
+  }).join("");
+  document.querySelectorAll(".review-button").forEach(button => button.addEventListener("click", () => openReport(button.dataset.item, button.dataset.reviewer)));
+}
+
+async function refresh() {
+  const response = await fetch("/api/state", {cache:"no-store"});
+  if (response.ok) render(await response.json());
+}
+document.getElementById("refreshButton").addEventListener("click", refresh);
+document.getElementById("closeDialog").addEventListener("click", () => document.getElementById("reportDialog").close());
+refresh();
+setInterval(refresh, 5000);
+</script>
+</body>
+</html>
+

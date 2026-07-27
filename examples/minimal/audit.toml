@@ -1,0 +1,55 @@
+version = 1
+
+[project]
+name = "Minimal finite-set proof"
+source = "proof.md"
+source_kind = "markdown"
+mode = "custom"
+
+[runner]
+kind = "mock"
+executable = "codex"
+model = ""
+reasoning_effort = "high"
+timeout_seconds = 60
+parallel = true
+
+[gate]
+policy = "all"
+min_passes = 0
+block_on_fail = true
+block_on_uncertain = true
+
+[[reviewers]]
+id = "logic"
+name = "Logic and statement"
+lens = "Check definitions, typing, quantifiers, and every inference."
+required = true
+
+[[reviewers]]
+id = "adversarial"
+name = "Adversarial"
+lens = "Try to refute the claim and test boundary cases."
+required = true
+
+[[items]]
+id = "001"
+title = "Definitions and scope"
+unit = "lines"
+start = 1
+end = 4
+
+[[items]]
+id = "002"
+title = "Disjoint-union lemma"
+unit = "lines"
+start = 5
+end = 9
+
+[[items]]
+id = "003"
+title = "Finite-cardinality theorem"
+unit = "lines"
+start = 10
+end = 15
+

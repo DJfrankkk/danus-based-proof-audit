@@ -1,0 +1,70 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "mathematical_verdict",
+    "editorial_repair",
+    "summary",
+    "findings",
+    "repair_notes",
+    "assumptions_checked",
+    "counterexamples_tried",
+    "confidence"
+  ],
+  "properties": {
+    "mathematical_verdict": {
+      "type": "string",
+      "enum": ["pass", "fail", "uncertain"]
+    },
+    "editorial_repair": {
+      "type": "boolean"
+    },
+    "summary": {
+      "type": "string",
+      "minLength": 1
+    },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["severity", "location", "issue", "suggested_fix"],
+        "properties": {
+          "severity": {
+            "type": "string",
+            "enum": ["critical", "gap", "warning"]
+          },
+          "location": {
+            "type": "string",
+            "minLength": 1
+          },
+          "issue": {
+            "type": "string",
+            "minLength": 1
+          },
+          "suggested_fix": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "repair_notes": {
+      "type": "string"
+    },
+    "assumptions_checked": {
+      "type": "array",
+      "items": {"type": "string"}
+    },
+    "counterexamples_tried": {
+      "type": "array",
+      "items": {"type": "string"}
+    },
+    "confidence": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    }
+  }
+}
+

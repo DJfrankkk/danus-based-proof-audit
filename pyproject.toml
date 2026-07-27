@@ -1,0 +1,41 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "proof-audit-pipeline"
+version = "0.1.0"
+description = "Configurable, evidence-preserving AI review for mathematical proofs"
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "Apache-2.0" }
+authors = [{ name = "Proof Audit Pipeline contributors" }]
+keywords = ["mathematics", "proof-review", "audit", "llm", "research"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Intended Audience :: Science/Research",
+  "License :: OSI Approved :: Apache Software License",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Topic :: Scientific/Engineering :: Mathematics",
+]
+dependencies = []
+
+[project.optional-dependencies]
+pdf = ["pypdf>=5"]
+dev = ["pytest>=8", "pypdf>=5"]
+
+[project.scripts]
+proofaudit = "proofaudit.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+proofaudit = ["assets/*.html", "assets/*.json"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+

@@ -1,0 +1,22 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.coverage
+htmlcov/
+dist/
+build/
+.venv/
+venv/
+
+# Local runner output can contain model transcripts.
+**/.proofaudit/outbox/
+**/.proofaudit/logs/
+**/.proofaudit/*.lock
+
+# The APAL example is configured here, but the publisher PDF is local-only.
+examples/amorphous-dual-dedekind/source/*.pdf
+!examples/amorphous-dual-dedekind/source/.gitkeep
+
+# Example runs are reproducible and should not dirty a clone.
+examples/**/.proofaudit/

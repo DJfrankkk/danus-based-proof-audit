@@ -1,0 +1,116 @@
+version = 1
+
+[project]
+name = "Amorphous sets and dual Dedekind finiteness"
+source = "source/Amorphous sets and dual Dedekind finiteness.pdf"
+source_kind = "pdf"
+mode = "custom"
+
+[runner]
+kind = "manual"
+executable = "codex"
+model = ""
+reasoning_effort = "high"
+timeout_seconds = 1800
+parallel = true
+
+[gate]
+policy = "all"
+min_passes = 0
+block_on_fail = true
+block_on_uncertain = true
+
+[[reviewers]]
+id = "logic"
+name = "Statements and logic"
+lens = "Check the exact definitions and theorem statements, object types, quantifier scope, dependencies, and every nontrivial deduction."
+required = true
+
+[[reviewers]]
+id = "choice-model"
+name = "Choice and ambient models"
+lens = "Track ZF versus ZFA, every use of Choice or a choice-like selection, the ambient universe of each object, absoluteness, and the assumptions of transfer results."
+required = true
+
+[[reviewers]]
+id = "permutation"
+name = "Permutation-model machinery"
+lens = "Audit the permutation groups, normal filters, supports, symmetric objects, projective types, and any passage from an atoms model to a pure ZF model."
+required = true
+
+[[reviewers]]
+id = "adversarial"
+name = "Adversarial counterexample search"
+lens = "Try to falsify each claim, test degenerate and boundary cases, and identify hidden well-ordering, uniformization, or unsupported existence assumptions."
+required = true
+
+[[items]]
+id = "001"
+title = "Main claims, definitions, and stated dependencies"
+unit = "pages"
+start = 1
+end = 2
+
+[[items]]
+id = "002"
+title = "Permutation-model setup and Lemma 2.1"
+unit = "pages"
+start = 2
+end = 3
+
+[[items]]
+id = "003"
+title = "Lemma 2.2 and the transfer setup"
+unit = "pages"
+start = 3
+end = 3
+
+[[items]]
+id = "004"
+title = "Projective-type setup and Lemma 3.1"
+unit = "pages"
+start = 3
+end = 4
+
+[[items]]
+id = "005"
+title = "Theorem 3.2"
+unit = "pages"
+start = 4
+end = 5
+
+[[items]]
+id = "006"
+title = "Lemma 4.1"
+unit = "pages"
+start = 5
+end = 7
+
+[[items]]
+id = "007"
+title = "Theorem 4.2"
+unit = "pages"
+start = 7
+end = 7
+
+[[items]]
+id = "008"
+title = "Lemma 5.1"
+unit = "pages"
+start = 7
+end = 8
+
+[[items]]
+id = "009"
+title = "Corollary 5.2 and Theorem 5.3"
+unit = "pages"
+start = 8
+end = 9
+
+[[items]]
+id = "010"
+title = "Open questions, scope claims, and references"
+unit = "pages"
+start = 9
+end = 10
+
